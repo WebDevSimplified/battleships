@@ -265,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (userSquares[random].classList.contains('submarine')) cpuSubmarineCount++
       if (userSquares[random].classList.contains('cruiser')) cpuCruiserCount++
       if (userSquares[random].classList.contains('battleship')) cpuBattleshipCount++
+      if (userSquares[random].classList.contains('carrier')) cpuCarrierCount++
       checkForWins() 
     } else computerGo()
     currentPlayer = 'user'
