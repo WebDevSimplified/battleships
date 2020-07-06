@@ -161,10 +161,12 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(shipClass)
     console.log(selectedShipIndex)
     console.log(draggedShip)
-    
+    console.log(isHorizontal)
     if (selectedShipIndex === draggedShip.firstChild.id) {
       for (let i = 0; i < draggedShipLength; i++) {
-        userSquares[parseInt(this.id) + i].classList.add('taken', shipClass)
+        if (isHorizontal) {
+          userSquares[parseInt(this.id) + i].classList.add('taken', shipClass)
+        } else userSquares[parseInt(this.id) + width].classList.add('taken', shipClass)
       }
     }
     if (draggedShip.childNodes[1] && selectedShipIndex === draggedShip.childNodes[1].id) {
