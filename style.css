@@ -143,7 +143,9 @@
   display: inline-block;
 }
 
-
+.miss {
+  background-color: black;
+}
 .boom {
   background-color: red;
 }

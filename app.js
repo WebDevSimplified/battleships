@@ -223,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function revealSquare(square) {
     if (!square.classList.contains('boom')) {
+      // Is !square.classList.contains('boom') necessary again?
       if (!square.classList.contains('boom') && square.classList.contains('destroyer')) destroyerCount++
       if (!square.classList.contains('boom') && square.classList.contains('submarine')) submarineCount++
       if (!square.classList.contains('boom') && square.classList.contains('cruiser')) cruiserCount++
@@ -231,6 +232,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
       if (square.classList.contains('taken')) {
         square.classList.add('boom')
+      } else {
+        square.classList.add('miss')
       }
       checkForWins()
       currentPlayer = 'computer'
