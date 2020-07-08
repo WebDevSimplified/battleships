@@ -136,8 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
  
   function dragStart(e){
     draggedShipNode = this.childNodes.item(e.target)
-    console.log(draggedShipNode)
-    console.log(draggedShip)
     draggedShip = this
     draggedShipLength = this.childNodes.length
   }
@@ -156,12 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function dragDrop() {
     shipId = draggedShip.firstChild.id
-    console.log(shipId)
     shipClass = shipId.slice(0, -2)
-    console.log(shipClass)
-    console.log(selectedShipIndex)
-    console.log(draggedShip)
-    console.log(isHorizontal)
+
     if (selectedShipIndex === draggedShip.firstChild.id) {
       for (let i = 0; i < draggedShipLength; i++) {
         if (isHorizontal) {
@@ -261,7 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!userSquares[random].classList.contains('boom')) {
       userSquares[random].classList.add('boom')
       if (userSquares[random].classList.contains('destroyer')) cpuDestroyerCount++
-      console.log(cpuDestroyerCount)
       if (userSquares[random].classList.contains('submarine')) cpuSubmarineCount++
       if (userSquares[random].classList.contains('cruiser')) cpuCruiserCount++
       if (userSquares[random].classList.contains('battleship')) cpuBattleshipCount++
