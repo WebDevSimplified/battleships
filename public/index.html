@@ -3,11 +3,25 @@
   <head>
     <meta charset="utf-8">
     <title>Battle Ships</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="app.js" charset="utf-8"></script>
+		<link rel="stylesheet" href="style.css">
+		<script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
   </head>
   <body>
 
+		<button id="onePlayer">1 Player</button>
+		<button id="twoPlayer">2 Player</button>
+		
+		<div class="player p1">
+			Player 1 
+			<div class="connected">Connected <span></span></div>
+			<div class="ready">Ready <span></span></div>
+		</div>
+		<div class="player p2">Player 2 
+			<div class="connected">Connected <span></span></div>
+			<div class="ready">Ready <span></span></div>
+		</div>
+		
     <h1 id="score"></h1>
 
     <div class="container">
