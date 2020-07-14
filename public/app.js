@@ -283,94 +283,99 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function dragDrop() {
-    shipId = draggedShip.firstChild.id;
-    shipClass = shipId.slice(0, -2);
+    let shipNameId = draggedShip.firstChild.id
+    let shipClass = shipNameId.slice(0, -2)
+    let shipNameLastId = draggedShip.lastChild.id
+    let lastShipIndex = parseInt(shipNameLastId.substr(-1))
+    let shipLastId =  lastShipIndex + parseInt(this.dataset.id)
+    let newNotAllowedHorizontal = []
+    let newNotAllowedVertical = []
+    const notAllowedHorizontal = [0,10,20,30,40,50,60,70,80,90,1,11,21,31,41,51,61,71,81,91,2,12,22,32,42,52,62,72,82,92,3,13,23,33,43,53,63,73,83,93]
+    const notAllowedVertical = [99,98,97,96,95,94,93,92,91,90,89,88,87,86,85,84,83,82,81,80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60]
+
+    if (lastShipIndex === 1) {
+      newNotAllowedHorizontal = notAllowedHorizontal.splice(0,10)
+      newNotAllowedVertical = notAllowedVertical.splice(0,10)
+    }
+    if (lastShipIndex === 2) {
+      newNotAllowedHorizontal = notAllowedHorizontal.splice(0,20)
+      newNotAllowedVertical = notAllowedVertical.splice(0,20)
+    }
+    if (lastShipIndex === 3) {
+      newNotAllowedHorizontal = notAllowedHorizontal.splice(0,30)
+      newNotAllowedVertical = notAllowedVertical.splice(0,30)
+    }
+    if (lastShipIndex === 4) {
+      newNotAllowedHorizontal = notAllowedHorizontal.splice(0,40)
+      newNotAllowedVertical = notAllowedVertical.splice(0,40)
+    }
+
 
     if (selectedShipIndex === draggedShip.firstChild.id) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) + i].classList.add("taken", shipClass);
-        } else {
-          userSquares[parseInt(this.dataset.id) + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
-        }
-      }
-    }
-    if (
-      draggedShip.childNodes[1] &&
-      selectedShipIndex === draggedShip.childNodes[1].id
-    ) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) - 1 + i].classList.add(
-            "taken",
-            shipClass,
-          );
-        } else {
-          userSquares[parseInt(this.dataset.id) - 1 + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
-        }
-      }
-    }
-    if (
-      draggedShip.childNodes[2] &&
-      selectedShipIndex === draggedShip.childNodes[2].id
-    ) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) - 2 + i].classList.add(
-            "taken",
-            shipClass,
-          );
-        } else {
-          userSquares[parseInt(this.dataset.id) - 2 + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
-        }
-      }
-    }
-    if (
-      draggedShip.childNodes[3] &&
-      selectedShipIndex === draggedShip.childNodes[3].id
-    ) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) - 3 + i].classList.add(
-            "taken",
-            shipClass,
-          );
-        } else {
-          userSquares[parseInt(this.dataset.id) - 3 + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
-        }
-      }
-    }
-    if (
-      draggedShip.childNodes[4] &&
-      selectedShipIndex === draggedShip.childNodes[4].id
-    ) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) - 4 + i].classList.add(
-            "taken",
-            shipClass,
-          );
-        } else {
-          userSquares[parseInt(this.dataset.id) - 4 + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
-        }
-      }
-    }
-    displayGrid.removeChild(draggedShip);
+      if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) + i].classList.add('taken', shipClass)
+        } 
+      } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) + width*i].classList.add('taken', shipClass)
+        } 
+      } else return
+    } 
+
+    if (draggedShip.childNodes[1] && selectedShipIndex === draggedShip.childNodes[1].id) {
+      shipLastId = shipLastId -1
+      if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) -1 + i].classList.add('taken', shipClass)
+        } 
+      } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) -1 + width*i].classList.add('taken', shipClass)
+        } 
+      } else return
+    } 
+
+    if (draggedShip.childNodes[2] && selectedShipIndex === draggedShip.childNodes[2].id) {
+      shipLastId = shipLastId -2
+      if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) -2 + i].classList.add('taken', shipClass)
+        } 
+      } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) -2 + width*i].classList.add('taken', shipClass)
+        } 
+      } else return
+    } 
+
+    if (draggedShip.childNodes[3] && selectedShipIndex === draggedShip.childNodes[3].id) {
+      shipLastId = shipLastId -3
+      if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) -3 + i].classList.add('taken', shipClass)
+        } 
+      } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) -3 + width*i].classList.add('taken', shipClass)
+        } 
+      } else return
+    } 
+  
+    if (draggedShip.childNodes[4] && selectedShipIndex === draggedShip.childNodes[4].id) {
+      shipLastId = shipLastId -4
+      if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) -4 + i].classList.add('taken', shipClass)
+        } 
+      } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          userSquares[parseInt(this.dataset.id) -4 + width*i].classList.add('taken', shipClass)
+        } 
+      } else return
+    } 
+  
+    displayGrid.removeChild(draggedShip)
     checkShipPlacement();
   }
 
@@ -430,21 +435,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const enemySquare = enemyGrid.querySelector(`div[data-id='${shotFired}']`);
     const obj = Object.values(classList);
     if (!enemySquare.classList.contains("boom") && currentPlayer === "user" && !isGameOver) {
-      if ( obj.includes("destroyer") ) {
-        destroyerCount++;
-      }
-      if ( obj.includes("submarine") ) {
-        submarineCount++;
-      }
-      if ( obj.includes("cruiser") ) {
-        cruiserCount++;
-      }
-      if ( obj.includes("battleship") ) {
-        battleshipCount++;
-      }
-      if ( obj.includes("carrier") ) {
-        carrierCount++;
-      }
+      if ( obj.includes("destroyer") )  destroyerCount++
+      if ( obj.includes("submarine") ) submarineCount++
+      if ( obj.includes("cruiser") ) cruiserCount++
+      if ( obj.includes("battleship") ) battleshipCount++
+      if ( obj.includes("carrier") ) carrierCount++
       
       if (obj.includes("taken")) {
         enemySquare.classList.add("boom");
