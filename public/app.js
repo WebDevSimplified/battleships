@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const setupButtons = document.getElementById('setup-buttons')
   const userGrid = document.querySelector(".grid-user");
   const enemyGrid = document.querySelector(".grid-computer");
   const displayGrid = document.querySelector(".grid-display");
@@ -8,8 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const cruiser = document.querySelector(".cruiser-container");
   const battleship = document.querySelector(".battleship-container");
   const carrier = document.querySelector(".carrier-container");
-  const onePlayerButton = document.querySelector("#onePlayer");
-  const twoPlayerButton = document.querySelector("#twoPlayer");
   const startButton = document.querySelector("#start");
   const rotateButton = document.querySelector("#rotate");
   const turnDisplay = document.querySelector("#whose-go");
@@ -20,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let isGameOver = false;
   let currentPlayer = "user";
   let isHorizontal = true;
-  let gameMode = "";
   let playerNum = 0;
   let ready = false;
   let enemyReady = false;
@@ -30,14 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Setup player boards
   createBoard(userGrid, userSquares, width);
   createBoard(enemyGrid, enemySquares, width);
-  
-  // Select Players
-  onePlayerButton.addEventListener("click", startOnePlayer);
-  twoPlayerButton.addEventListener("click", startTwoPlayer);
 
   // Multi-Player
   function startTwoPlayer() {
-    gameMode = "twoPlayer";
     const socket = io();
 
     // Another player has connected or disconnected
@@ -59,8 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Listen for player ready
         startButton.addEventListener("click", () => {
-          if(allShipsPlaced) playGameMulti(socket)
-          else infoDisplay.innerHTML = "Please place all ships"
+          if(allShipsPlaced) {
+            playGameMulti(socket)
+            setupButtons.style.display = 'none'
+          } else {
+            infoDisplay.innerHTML = "Please place all ships"
+          }
         });
       }
     });
@@ -111,26 +108,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function playerConnectedOrDisconnect(num) {
     let player = `.p${parseInt(num) + 1}`;
-    document.querySelector(`${player} .connected span`).classList.toggle('green');
+    document.querySelector(`${player} .connected`).classList.toggle('active');
     if (parseInt(num) === playerNum) document.querySelector(`${player}`).style.fontWeight = 'bold';
   }
 
   function playerReady(num) {
     let player = `.p${parseInt(num) + 1}`;
-    document.querySelector(`${player} .ready span`).classList.toggle('green');
+    document.querySelector(`${player} .ready`).classList.toggle('active');
   }
 
   // Single Player
   function startOnePlayer() {
-    gameMode = "onePlayer";
-
     generate(shipArray[0]);
     generate(shipArray[1]);
     generate(shipArray[2]);
     generate(shipArray[3]);
     generate(shipArray[4]);
-    
-    startButton.addEventListener("click", playGameSingle);
+
+    startButton.addEventListener("click", () => {
+      setupButtons.style.display = 'none'
+      playGameSingle()
+    });
   }
 
   // Create Boards
@@ -206,9 +204,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     if (!isTaken && !isAtRightEdge && !isAtLeftEdge) {
-      current.forEach((index) =>
-        enemySquares[randomStart + index].classList.add("taken", ship.name)
-      );
+      current.forEach((position, index) => {
+        const square = enemySquares[randomStart + position]
+        const directionClass = randomDirection === 0 ? 'horizontal' : 'vertical'
+        square.classList.add("taken", ship.name, directionClass)
+        if (index === 0) square.classList.add('start')
+        if (index === current.length - 1) square.classList.add('end')
+      });
     } else generate(ship);
   }
   
@@ -286,90 +288,30 @@ document.addEventListener("DOMContentLoaded", () => {
     shipId = draggedShip.firstChild.id;
     shipClass = shipId.slice(0, -2);
 
-    if (selectedShipIndex === draggedShip.firstChild.id) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) + i].classList.add("taken", shipClass);
-        } else {
-          userSquares[parseInt(this.dataset.id) + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
+    for (let offset = 0; offset <= 4; offset++) {
+      if (
+        draggedShip.childNodes[offset] &&
+        selectedShipIndex === draggedShip.childNodes[offset].id
+      ) {
+        for (let i = 0; i < draggedShipLength; i++) {
+          let square
+          let directionClass
+           
+          if (isHorizontal) {
+            square = userSquares[parseInt(this.dataset.id) + i - offset]
+            directionClass = 'horizontal'
+          } else {
+            square = userSquares[parseInt(this.dataset.id) + width * i - offset]
+            directionClass = 'vertical'
+          }
+
+          square.classList.add("taken", shipClass, directionClass);
+          if (i === 0) square.classList.add('start')
+          if (i === draggedShipLength - 1) square.classList.add('end')
         }
       }
     }
-    if (
-      draggedShip.childNodes[1] &&
-      selectedShipIndex === draggedShip.childNodes[1].id
-    ) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) - 1 + i].classList.add(
-            "taken",
-            shipClass,
-          );
-        } else {
-          userSquares[parseInt(this.dataset.id) - 1 + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
-        }
-      }
-    }
-    if (
-      draggedShip.childNodes[2] &&
-      selectedShipIndex === draggedShip.childNodes[2].id
-    ) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) - 2 + i].classList.add(
-            "taken",
-            shipClass,
-          );
-        } else {
-          userSquares[parseInt(this.dataset.id) - 2 + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
-        }
-      }
-    }
-    if (
-      draggedShip.childNodes[3] &&
-      selectedShipIndex === draggedShip.childNodes[3].id
-    ) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) - 3 + i].classList.add(
-            "taken",
-            shipClass,
-          );
-        } else {
-          userSquares[parseInt(this.dataset.id) - 3 + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
-        }
-      }
-    }
-    if (
-      draggedShip.childNodes[4] &&
-      selectedShipIndex === draggedShip.childNodes[4].id
-    ) {
-      for (let i = 0; i < draggedShipLength; i++) {
-        if (isHorizontal) {
-          userSquares[parseInt(this.dataset.id) - 4 + i].classList.add(
-            "taken",
-            shipClass,
-          );
-        } else {
-          userSquares[parseInt(this.dataset.id) - 4 + width * i].classList.add(
-            "taken",
-            shipClass,
-          );
-        }
-      }
-    }
+
     displayGrid.removeChild(draggedShip);
     checkShipPlacement();
   }
@@ -547,5 +489,11 @@ document.addEventListener("DOMContentLoaded", () => {
       infoDisplay.innerHTML = "ENEMY WINS!";
       isGameOver = true;
     }
+  }
+
+  if (gameMode === 'onePlayer') {
+    startOnePlayer()
+  } else {
+    startTwoPlayer()
   }
 });
